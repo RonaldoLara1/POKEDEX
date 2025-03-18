@@ -5,19 +5,21 @@ from marshmallow import ValidationError
 from app.schemas.user_schema import UserSchema 
 from app.tools.response_manager import ResponseManager
 from app.schemas.pokemon_favorites_schema import FavoriteSchema
+from flask_jwt_extended import jwt_required
 
 RM = ResponseManager()
-bp = Blueprint('user_controller', __name__, url_prefix='/favorite-pokemons')
-FP_MODEL = ModelFactory.get_model("pokemon_favorites")
-FP_SCHEMA = FavoriteSchema()
+bp = Blueprint('user_controller', __name__, url_prefix='/pokemon')
+PM = ModelFactory.get_model("pokemons")
 
 
-@bp.route('/get_all', methods=['GET'])
-def get_all(pokemon_id):
-    data = FP_MODEL.find_all(pokemon_id)
+@bp.route('/', methods=['GET'])
+@jwt_required()
+def get_all():
+    data = PM.find_all()
     return RM.success(data)
 
-@bp.route('/get_one', methods=['GET'])
-def get_by_id(pokemon_id):
-    data = FP_MODEL.find_by_id(pokemon_id)
+@bp.route('/get/<string:pokemon_id>', methods=['GET'])
+@jwt_required()
+def get_pokemon(pokemon_id):
+    data = PM.find_one(ObjectId (pokemon_id))
     return RM.success(data)
