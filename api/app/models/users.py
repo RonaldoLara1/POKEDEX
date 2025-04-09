@@ -10,5 +10,6 @@ class User(SuperClase):
     
     def get_by_email(self, email):
         user = self.collection.find_one({"email":email})
-        user["_id"] = str(user["_id"]) 
+        if user:
+            user["_id"] = str(user["_id"]) 
         return user
